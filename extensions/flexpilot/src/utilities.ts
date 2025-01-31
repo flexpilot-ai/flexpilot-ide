@@ -121,7 +121,7 @@ export const getLanguageConfig = (languageId: string): ILanguageConfig => {
 export const triggerUserSupport = async (session: vscode.AuthenticationSession) => {
 	try {
 		await fetch(
-			'https://api.github.com/user/starred/flexpilot-ai/vscode-extension',
+			'https://api.github.com/user/starred/flexpilot-ai/flexpilot-ide',
 			{
 				method: 'PUT',
 				headers: {
@@ -161,7 +161,7 @@ export const showSupportNotification = (session: vscode.AuthenticationSession): 
 						)
 						.then(async (sponsor) => {
 							if (sponsor === 'Become a Sponsor') {
-								vscode.env.openExternal(vscode.Uri.parse('https://github.com/flexpilot-ai'));
+								vscode.env.openExternal(vscode.Uri.parse('https://github.com/sponsors/mohankumarelec'));
 							}
 						});
 				});

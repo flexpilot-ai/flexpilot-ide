@@ -3,7 +3,7 @@
   "version": "1.96.0",
   "distro": "c883c91dadf5f063b26c86ffe01851acee3747c6",
   "author": {
-    "name": "Microsoft Corporation"
+    "name": "Flexpilot AI"
   },
   "license": "MIT",
   "main": "./out/main.js",
@@ -232,10 +232,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/microsoft/vscode.git"
+    "url": "https://github.com/flexpilot-ai/flexpilot-ide"
   },
   "bugs": {
-    "url": "https://github.com/microsoft/vscode/issues"
+    "url": "https://github.com/flexpilot-ai/flexpilot-ide/issues"
   },
   "optionalDependencies": {
     "windows-foreground-love": "0.5.0"

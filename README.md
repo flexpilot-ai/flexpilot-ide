@@ -2,8 +2,10 @@
 
 > _"An open-source, free, AI-native, privacy-first IDE, forked from VS Code, offering the flexibility to bring your own keys for the LLMs of your choice."_
 
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/flexpilot-ai/flexpilot-ide/product-stable-build.yml)
-[![License](https://img.shields.io/badge/license-GNU%20GPLv3-blue.svg)](LICENSE)
+![Build](https://github.com/flexpilot-ai/flexpilot-ide/actions/workflows/build.yml/badge.svg)
+![Release](https://github.com/flexpilot-ai/flexpilot-ide/actions/workflows/release.yml/badge.svg)
+[![License](https://img.shields.io/badge/license-GNU%20GPLv3-blue.svg)](extensions/flexpilot/LICENSE)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.txt)
 [![Star on GitHub](https://img.shields.io/github/stars/flexpilot-ai/flexpilot-ide?style=social)](https://github.com/flexpilot-ai/flexpilot-ide)
 
 Flexpilot IDE is an open-source, AI-native, privacy-first IDE that offers the flexibility to bring your own keys for the LLMs of your choice. Forked from VS Code, Flexpilot IDE is designed to provide a seamless, AI-powered coding experience that is fully customizable, community-driven, and transparent.
@@ -37,16 +39,6 @@ Experience the power of Flexpilot IDE without any installation! Click the button
 - Groq
 - Google Gemini
 - Mistral AI
-- Ollama
-- Cerbras
-- Anyscale
-- KoboldCpp
-- text-gen-webui
-- FastChat
-- LocalAI
-- llama-cpp-python
-- TensorRT-LLM
-- vLLM
 - _Any many more!_
 
 ## 🤝 Contributing
