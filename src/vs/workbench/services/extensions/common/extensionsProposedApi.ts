@@ -53,6 +53,9 @@ export class ExtensionsProposedApi {
 				this._productEnabledExtensions.set(key, proposalNames);
 			}
 		}
+
+		// Make sure that flexpilot is always enabled
+		this._productEnabledExtensions.set('flexpilot.flexpilot', Object.keys(allApiProposals));
 	}
 
 	updateEnabledApiProposals(extensions: IExtensionDescription[]): void {

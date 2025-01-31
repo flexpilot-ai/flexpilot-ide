@@ -15,8 +15,8 @@ import { CANCELLATION_ERROR, NETWORK_ERROR, USER_CANCELLATION_ERROR } from './co
 import { Config } from './config';
 import { base64Encode } from './node/buffer';
 
-const REDIRECT_URL_STABLE = 'https://vscode.dev/redirect';
-const REDIRECT_URL_INSIDERS = 'https://insiders.vscode.dev/redirect';
+const REDIRECT_URL_STABLE = 'https://ide.flexpilot.ai/redirect';
+const REDIRECT_URL_INSIDERS = 'https://insiders-ide.flexpilot.ai/redirect';
 
 export interface IGitHubServer {
 	login(scopes: string, existingLogin?: string): Promise<string>;

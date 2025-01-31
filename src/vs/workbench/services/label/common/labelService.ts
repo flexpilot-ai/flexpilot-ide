@@ -313,6 +313,13 @@ export class LabelService extends Disposable implements ILabelService {
 			return '';
 		}
 
+		// Workspace: Flexpilot WebFS
+		if (isSingleFolderWorkspaceIdentifier(workspace) && workspace.uri.scheme === 'web-fs') {
+			if (workspace.uri.authority === 'github') {
+				return (workspace.uri.path.split('/')[2] || 'Untitled') + ' [GitHub]';
+			}
+		}
+
 		// Workspace: Single Folder (as URI)
 		if (URI.isUri(workspace)) {
 			return this.doGetSingleFolderWorkspaceLabel(workspace, options);

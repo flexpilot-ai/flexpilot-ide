@@ -11,5 +11,5 @@ export interface IConfig {
 
 // For easy access to mixin client ID and secret
 export const Config: IConfig = {
-	gitHubClientId: '01ab8ac9400c4e429b23'
+	gitHubClientId: '01ab8ac9400c4e429b23',
 };

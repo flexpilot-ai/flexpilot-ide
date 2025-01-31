@@ -13,12 +13,20 @@ const pall = require('p-all');
 
 const { all, copyrightFilter, unicodeFilter, indentationFilter, tsFormattingFilter, eslintFilter, stylelintFilter } = require('./filters');
 
-const copyrightHeaderLines = [
+const microsoftCopyrightHeaderLines = [
 	'/*---------------------------------------------------------------------------------------------',
 	' *  Copyright (c) Microsoft Corporation. All rights reserved.',
 	' *  Licensed under the MIT License. See License.txt in the project root for license information.',
 	' *--------------------------------------------------------------------------------------------*/',
 ];
+
+const flexpilotCopyrightHeaderLines = [
+	'/*---------------------------------------------------------------------------------------------',
+	' *  Copyright (c) Flexpilot AI. All rights reserved.',
+	' *  Licensed under the GPL-3.0 License. See License.txt in the project root for license information.',
+	' *--------------------------------------------------------------------------------------------*/',
+];
+
 
 function hygiene(some, linting = true) {
 	const eslint = require('./gulp-eslint');
@@ -30,10 +38,10 @@ function hygiene(some, linting = true) {
 	const productJson = es.through(function (file) {
 		const product = JSON.parse(file.contents.toString('utf8'));
 
-		if (product.extensionsGallery) {
-			console.error(`product.json: Contains 'extensionsGallery'`);
-			errorCount++;
-		}
+		// if (product.extensionsGallery) {
+		// 	console.error(`product.json: Contains 'extensionsGallery'`);
+		// 	errorCount++;
+		// }
 
 		this.emit('data', file);
 	});
@@ -100,8 +108,11 @@ function hygiene(some, linting = true) {
 	const copyrights = es.through(function (file) {
 		const lines = file.__lines;
 
-		for (let i = 0; i < copyrightHeaderLines.length; i++) {
-			if (lines[i] !== copyrightHeaderLines[i]) {
+		for (let i = 0; i < microsoftCopyrightHeaderLines.length; i++) {
+			if (
+				lines[i] !== microsoftCopyrightHeaderLines[i] &&
+				lines[i] !== flexpilotCopyrightHeaderLines[i]
+			) {
 				console.error(file.relative + ': Missing or bad copyright statement');
 				errorCount++;
 				break;

@@ -1,0 +1,26 @@
+{
+	"extends": "../tsconfig.base.json",
+	"compilerOptions": {
+		"sourceMap": true,
+		"outDir": "./out",
+		"experimentalDecorators": true,
+		"resolveJsonModule": true,
+		"typeRoots": [
+			"./node_modules/@types"
+		],
+		"lib": [
+			"WebWorker"
+		],
+		"jsx": "react-jsx",
+		"strict": true
+	},
+	"include": [
+		"global.d.ts",
+		"src/**/*",
+		"../../src/vscode-dts/flexpilot.d.ts",
+		"../../src/vscode-dts/vscode.d.ts",
+		"../../src/vscode-dts/vscode.proposed.*.d.ts",
+		"../git/src/api/git.d.ts",
+		"../git/src/api/git-base.d.ts"
+	]
+}

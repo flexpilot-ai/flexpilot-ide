@@ -321,6 +321,7 @@ const skippedExportMangledProjects = [
 	// These projects use webpack to dynamically rewrite imports, which messes up our mangling
 	'configuration-editing',
 	'microsoft-authentication',
+	'flexpilot',
 	'github-authentication',
 	'html-language-features/server',
 ];

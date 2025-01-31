@@ -79,6 +79,7 @@ export interface IInput extends IConfirmation {
 
 export interface IInputElement {
 	readonly type?: 'text' | 'password';
+	readonly label?: string;
 	readonly value?: string;
 	readonly placeholder?: string;
 }
@@ -279,6 +280,7 @@ export interface ICustomDialogOptions {
 	readonly icon?: ThemeIcon;
 	readonly disableCloseAction?: boolean;
 	readonly closeOnLinkClick?: boolean;
+	readonly dialogId?: 'flexpilot-model-config';
 }
 
 export interface ICustomDialogMarkdown {

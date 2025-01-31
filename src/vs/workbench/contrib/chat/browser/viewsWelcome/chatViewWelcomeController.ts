@@ -145,9 +145,17 @@ export class ChatViewWelcomePart extends Disposable {
 			title.textContent = content.title;
 
 			// Preview indicator
-			if (options?.location === ChatAgentLocation.EditingSession && typeof content.message !== 'function') {
+			if (options?.location === ChatAgentLocation.EditingSession && typeof content.message === 'function') {
 				const featureIndicator = dom.append(this.element, $('.chat-welcome-view-indicator'));
 				featureIndicator.textContent = localize('preview', 'PREVIEW');
+			}
+
+			if (options?.location === ChatAgentLocation.EditingSession) {
+				const featureIndicator = dom.append(this.element, $('.chat-welcome-view-indicator'));
+				featureIndicator.textContent = localize('Multi-File Editing Session', 'Multi-File Editing Session');
+			} else if (options?.location === ChatAgentLocation.Panel) {
+				const featureIndicator = dom.append(this.element, $('.chat-welcome-view-indicator'));
+				featureIndicator.textContent = localize('Chat Session', 'Chat Session');
 			}
 
 			// Message

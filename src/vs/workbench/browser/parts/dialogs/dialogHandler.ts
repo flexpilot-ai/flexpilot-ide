@@ -126,6 +126,7 @@ export class BrowserDialogHandler extends AbstractDialogHandler {
 			{
 				detail,
 				cancelId,
+				dialogId: customOptions?.dialogId,
 				type: this.getDialogType(type),
 				keyEventProcessor: (event: StandardKeyboardEvent) => {
 					const resolved = this.keybindingService.softDispatch(event, this.layoutService.activeContainer);

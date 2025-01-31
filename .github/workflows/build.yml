@@ -1,0 +1,185 @@
+name: Product Build Workflow
+
+on:
+  push:
+    branches:
+      - "*"
+
+permissions:
+  contents: write
+
+jobs:
+  macos_build:
+    runs-on: ${{ matrix.runner }}
+    name: "Build for Mac OS"
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-latest
+            arch: arm64
+          - runner: macos-13
+            arch: x64
+    steps:
+      - name: Checkout Repository Source Code
+        uses: actions/checkout@v4
+        with:
+          path: 'repository'
+
+      - name: Set up Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Set up Python Environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Project Dependencies
+        working-directory: ./repository
+        run: npm install
+
+      - name: Build Mac OS Executables
+        working-directory: ./repository
+        run: npm run gulp vscode-darwin-${{ matrix.arch }}-min
+
+      - name: Package Application for Distribution
+        working-directory: ./VSCode-darwin-${{ matrix.arch }}
+        run: ditto -c -k --sequesterRsrc --keepParent "Flexpilot.app" "macos-${{ matrix.arch }}-app.zip"
+
+      - name: Upload Application Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-${{ matrix.arch }}-app
+          path: "VSCode-darwin-${{ matrix.arch }}/macos-${{ matrix.arch }}-app.zip"
+
+  linux_build:
+    runs-on: ${{ matrix.runner }}
+    name: "Build for Linux"
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04-arm
+            arch: arm64
+          - runner: ubuntu-24.04
+            arch: x64
+    steps:
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
+        with:
+          path: 'repository'
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Linux Build Dependencies
+        run: sudo apt-get install build-essential g++ libx11-dev libxkbfile-dev libsecret-1-dev libkrb5-dev python-is-python3 fakeroot rpm
+
+      - name: Install Project Dependencies
+        working-directory: ./repository
+        run: npm install
+
+      - name: Build Flexpilot Executables
+        working-directory: ./repository
+        run: npm run gulp vscode-linux-${{ matrix.arch }}-min
+
+      - name: Prepare Debian Package Files
+        working-directory: ./repository
+        run: npm run gulp vscode-linux-${{ matrix.arch }}-prepare-deb
+
+      - name: Build Debian Package
+        working-directory: ./repository
+        run: npm run gulp vscode-linux-${{ matrix.arch }}-build-deb
+
+      - name: Rename Debian Package
+        working-directory: ${{ github.workspace }}/repository/.build/linux/deb/${{ matrix.arch == 'x64' && 'amd64' || 'arm64' }}/deb
+        run: mv *.deb linux-${{ matrix.arch }}.deb
+
+      - name: Upload Debian Package Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-${{ matrix.arch }}-deb
+          path: ${{ github.workspace }}/repository/.build/linux/deb/${{ matrix.arch == 'x64' && 'amd64' || 'arm64' }}/deb/linux-${{ matrix.arch }}.deb
+
+      - name: Prepare RPM Package Files
+        working-directory: ./repository
+        run: npm run gulp vscode-linux-${{ matrix.arch }}-prepare-rpm
+
+      - name: Build RPM Package
+        working-directory: ./repository
+        run: npm run gulp vscode-linux-${{ matrix.arch }}-build-rpm
+
+      - name: Rename RPM Package
+        working-directory: ${{ github.workspace }}/repository/.build/linux/rpm/${{ matrix.arch == 'x64' && 'x86_64' || 'aarch64' }}
+        run: mv *.rpm linux-${{ matrix.arch }}.rpm
+
+      - name: Upload RPM Package Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-${{ matrix.arch }}-rpm
+          path: ${{ github.workspace }}/repository/.build/linux/rpm/${{ matrix.arch == 'x64' && 'x86_64' || 'aarch64' }}/linux-${{ matrix.arch }}.rpm
+
+  windows-build:
+    runs-on: 'windows-latest'
+    name: "Build for Windows"
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [user, system]
+        arch: [x64, arm64]
+    env:
+      npm_config_arch: ${{ matrix.arch == 'x64' && 'x64' || 'arm64' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          path: 'repository'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        working-directory: .\repository
+        run: npm install
+
+      - name: Build Executables
+        working-directory: ./repository
+        run: npm run gulp vscode-win32-${{ matrix.arch }}-min
+
+      - name: Apply Inno Setup Updater
+        working-directory: ./repository
+        run: npm run gulp vscode-win32-${{ matrix.arch }}-inno-updater
+
+      - name: Create Installer
+        working-directory: ./repository
+        run: npm run gulp vscode-win32-${{ matrix.arch }}-${{ matrix.target }}-setup
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-${{ matrix.arch }}-${{ matrix.target }}-exe
+          path: ${{ github.workspace }}/repository/.build/win32-${{ matrix.arch }}/${{ matrix.target }}-setup/Flexpilot.exe
+
+      - name: Rename Installer
+        working-directory: ${{ github.workspace }}/repository/.build/win32-${{ matrix.arch }}/${{ matrix.target }}-setup
+        run: mv Flexpilot.exe windows-${{ matrix.arch }}-${{ matrix.target }}.exe

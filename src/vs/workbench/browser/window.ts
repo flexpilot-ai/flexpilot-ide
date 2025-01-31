@@ -31,6 +31,8 @@ import { CodeWindow, isAuxiliaryWindow, mainWindow } from '../../base/browser/wi
 import { createSingleCallFunction } from '../../base/common/functional.js';
 import { IConfigurationService } from '../../platform/configuration/common/configuration.js';
 import { IWorkbenchEnvironmentService } from '../services/environment/common/environmentService.js';
+// eslint-disable-next-line local/code-import-patterns
+import { ICustomDialogInputOptions } from '../../../vscode-dts/flexpilot.js';
 
 export abstract class BaseWindow extends Disposable {
 
@@ -227,6 +229,12 @@ export class BrowserWindow extends BaseWindow {
 		@IHostService hostService: IHostService
 	) {
 		super(mainWindow, undefined, hostService, browserEnvironmentService);
+		CommandsRegistry.registerCommand(
+			'flexpilot.custom.dialog.show',
+			(_accessor: ServicesAccessor, options: ICustomDialogInputOptions) => {
+				return dialogService.input(options);
+			},
+		);
 
 		this.registerListeners();
 		this.create();

@@ -13,6 +13,20 @@ import { IEnvironmentService } from '../../environment/common/environment.js';
 import { ILogService } from '../../log/common/log.js';
 import { IConfigurationService } from '../../configuration/common/configuration.js';
 import { AbstractExtensionResourceLoaderService, IExtensionResourceLoaderService } from '../common/extensionResourceLoader.js';
+import { isWeb } from '../../../base/common/platform.js';
+
+/**
+ * Modifies the given URL to route through a CORS proxy.
+ */
+export const corsEnableUrl = (url: string) => {
+	if (!isWeb) { return URI.parse(url); }
+	const baseUrlObject = new URL(url);
+	baseUrlObject.protocol = 'https:';
+	baseUrlObject.port = '';
+	baseUrlObject.pathname = '/' + baseUrlObject.hostname + baseUrlObject.pathname;
+	baseUrlObject.hostname = 'cors-proxy.flexpilot.ai';
+	return URI.parse(baseUrlObject.toString());
+};
 
 class ExtensionResourceLoaderService extends AbstractExtensionResourceLoaderService {
 
@@ -41,6 +55,12 @@ class ExtensionResourceLoaderService extends AbstractExtensionResourceLoaderServ
 		if (this.isExtensionGalleryResource(uri)) {
 			requestInit.headers = await this.getExtensionGalleryRequestHeaders();
 			requestInit.mode = 'cors'; /* set mode to cors so that above headers are always passed */
+		}
+
+		const requestUrl = new URL(uri.toString(true));
+		const CORS_SKIP_HOSTS = ['localhost', 'ide.flexpilot.ai', 'cors-proxy.flexpilot.ai'];
+		if (!CORS_SKIP_HOSTS.includes(requestUrl.hostname)) {
+			uri = corsEnableUrl(uri.toString(true));
 		}
 
 		const response = await fetch(uri.toString(true), requestInit);

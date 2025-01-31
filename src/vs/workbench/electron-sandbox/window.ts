@@ -58,7 +58,7 @@ import { IEditorGroupsService, IEditorPart } from '../services/editor/common/edi
 import { IDialogService } from '../../platform/dialogs/common/dialogs.js';
 import { AuthInfo } from '../../base/parts/sandbox/electron-sandbox/electronTypes.js';
 import { ILogService } from '../../platform/log/common/log.js';
-import { IInstantiationService } from '../../platform/instantiation/common/instantiation.js';
+import { IInstantiationService, ServicesAccessor } from '../../platform/instantiation/common/instantiation.js';
 import { whenEditorClosed } from '../browser/editor.js';
 import { ISharedProcessService } from '../../platform/ipc/electron-sandbox/services.js';
 import { IProgressService, ProgressLocation } from '../../platform/progress/common/progress.js';
@@ -80,6 +80,8 @@ import { ThemeIcon } from '../../base/common/themables.js';
 import { getWorkbenchContribution } from '../common/contributions.js';
 import { DynamicWorkbenchSecurityConfiguration } from '../common/configuration.js';
 import { nativeHoverDelegate } from '../../platform/hover/browser/hover.js';
+// eslint-disable-next-line local/code-import-patterns
+import { ICustomDialogInputOptions } from '../../../vscode-dts/flexpilot.js';
 
 export class NativeWindow extends BaseWindow {
 
@@ -130,6 +132,13 @@ export class NativeWindow extends BaseWindow {
 		@IHostService hostService: IHostService
 	) {
 		super(mainWindow, undefined, hostService, nativeEnvironmentService);
+
+		CommandsRegistry.registerCommand(
+			'flexpilot.custom.dialog.show',
+			(_accessor: ServicesAccessor, options: ICustomDialogInputOptions) => {
+				return dialogService.input(options);
+			},
+		);
 
 		this.registerListeners();
 		this.create();

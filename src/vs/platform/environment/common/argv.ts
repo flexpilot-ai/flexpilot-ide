@@ -14,15 +14,15 @@ export interface INativeCliOptions {
  */
 export interface NativeParsedArgs {
 	// subcommands
-	tunnel?: INativeCliOptions & {
-		user: {
-			login: {
-				'access-token'?: string;
-				'provider'?: string;
-			};
-		};
-	};
-	'serve-web'?: INativeCliOptions;
+	// tunnel?: INativeCliOptions & {
+	// 	user: {
+	// 		login: {
+	// 			'access-token'?: string;
+	// 			'provider'?: string;
+	// 		};
+	// 	};
+	// };
+	// 'serve-web'?: INativeCliOptions;
 	_: string[];
 	'folder-uri'?: string[]; // undefined or array of 1 or more
 	'file-uri'?: string[]; // undefined or array of 1 or more

@@ -1,1 +1,13 @@
-<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><style>.st0{fill:#f6f6f6;fill-opacity:0}.st1{fill:#fff}.st2{fill:#167abf}</style><path class="st0" d="M1024 1024H0V0h1024v1024z"/><path class="st1" d="M1024 85.333v853.333H0V85.333h1024z"/><path class="st2" d="M0 85.333h298.667v853.333H0V85.333zm1024 0v853.333H384V85.333h640zm-554.667 160h341.333v-64H469.333v64zm341.334 533.334H469.333v64h341.333l.001-64zm128-149.334H597.333v64h341.333l.001-64zm0-149.333H597.333v64h341.333l.001-64zm0-149.333H597.333v64h341.333l.001-64z"/></svg>
+<svg viewBox="0 0 1024 1024" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(-2972.912 -6037.48)scale(50.17274)">
+    <rect x="131.181" y="6.833" width="2.862" height="15.05" style="fill:#4f46e5;fill-opacity:1;stroke:#000;stroke-width:0;stroke-miterlimit:6.99" rx="1.431" ry="1.431" transform="rotate(45 -34.024 -5.932)"/>
+    <rect x="-21.882" y="136.089" width="2.862" height="10.102" style="fill:#2563eb;fill-opacity:1;stroke:#000;stroke-width:0;stroke-miterlimit:6.99" rx="1.431" ry="1.431" transform="rotate(-45 19.864 28.253)"/>
+    <rect x="136.07" y="11.776" width="2.862" height="10.103" style="opacity:1;fill:#0ea5e9;fill-opacity:1;stroke:#000;stroke-width:0;stroke-miterlimit:6.99;paint-order:fill" rx="1.431" ry="1.431" transform="rotate(45 -34.024 -5.932)"/>
+  </g>
+</svg>
+
+<!-- <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <path d="M1024 1024H0V0h1024z" style="fill:#f6f6f6;fill-opacity:0" fill="none"/>
+  <path d="M1024 85.333v853.333H0V85.333z" style="fill:#fff"/>
+  <path d="M0 85.333h298.667v853.333H0zm1024 0v853.333H384V85.333zm-554.667 160h341.333v-64H469.333zm341.334 533.334H469.333v64h341.333zm128-149.334H597.333v64h341.333zm0-149.333H597.333v64h341.333zm0-149.333H597.333v64h341.333z" style="fill:#167abf"/>
+</svg> -->

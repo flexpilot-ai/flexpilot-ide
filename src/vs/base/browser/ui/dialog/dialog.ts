@@ -22,10 +22,12 @@ import * as nls from '../../../../nls.js';
 export interface IDialogInputOptions {
 	readonly placeholder?: string;
 	readonly type?: 'text' | 'password';
+	label?: string;
 	readonly value?: string;
 }
 
 export interface IDialogOptions {
+	readonly dialogId?: string;
 	readonly cancelId?: number;
 	readonly detail?: string;
 	readonly checkboxLabel?: string;
@@ -88,7 +90,7 @@ export class Dialog extends Disposable {
 
 		this.modalElement = this.container.appendChild($(`.monaco-dialog-modal-block.dimmed`));
 		this.shadowElement = this.modalElement.appendChild($('.dialog-shadow'));
-		this.element = this.shadowElement.appendChild($('.monaco-dialog-box'));
+		this.element = this.shadowElement.appendChild($(options.dialogId ? `#${options.dialogId}.monaco-dialog-box` : '.monaco-dialog-box'));
 		this.element.setAttribute('role', 'dialog');
 		this.element.tabIndex = -1;
 		hide(this.element);
@@ -134,6 +136,11 @@ export class Dialog extends Disposable {
 
 		if (this.options.inputs) {
 			this.inputs = this.options.inputs.map(input => {
+				if (input.label) {
+					const labelElement = this.messageContainer.appendChild($('.dialog-message-input-label'));
+					labelElement.innerText = input.label;
+				}
+
 				const inputRowElement = this.messageContainer.appendChild($('.dialog-message-input'));
 
 				const inputBox = this._register(new InputBox(inputRowElement, undefined, {
@@ -430,7 +437,7 @@ export class Dialog extends Disposable {
 			// Focus first element (input or button)
 			if (this.inputs.length > 0) {
 				this.inputs[0].focus();
-				this.inputs[0].select();
+				// this.inputs[0].select();
 			} else {
 				buttonMap.forEach((value, index) => {
 					if (value.index === 0) {

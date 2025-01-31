@@ -128,7 +128,7 @@ export class ChatSetupContribution extends Disposable implements IWorkbenchContr
 	) {
 		super();
 
-		if (!this.productService.defaultChatAgent) {
+		if (this.productService.defaultChatAgent) {
 			return;
 		}
 

@@ -35,6 +35,7 @@ const compilations = [
 	'extensions/debug-server-ready/tsconfig.json',
 	'extensions/emmet/tsconfig.json',
 	'extensions/extension-editing/tsconfig.json',
+	'extensions/flexpilot/tsconfig.json',
 	'extensions/git/tsconfig.json',
 	'extensions/git-base/tsconfig.json',
 	'extensions/github/tsconfig.json',
@@ -115,7 +116,7 @@ const tasks = compilations.map(function (tsconfigFile) {
 
 		const pipeline = function () {
 			const input = es.through();
-			const tsFilter = filter(['**/*.ts', '!**/lib/lib*.d.ts', '!**/node_modules/**'], { restore: true, dot: true });
+			const tsFilter = filter(['**/*.ts', '**/*.tsx', '!**/lib/lib*.d.ts', '!**/node_modules/**'], { restore: true, dot: true });
 			const output = input
 				.pipe(plumber({
 					errorHandler: function (err) {

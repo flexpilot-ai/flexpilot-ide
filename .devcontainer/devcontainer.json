@@ -1,5 +1,5 @@
 {
-	"name": "Code - OSS",
+	"name": "Flexpilot",
 	"build": {
 		"dockerfile": "Dockerfile"
 	},

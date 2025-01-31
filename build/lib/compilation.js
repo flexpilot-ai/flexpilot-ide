@@ -21,9 +21,7 @@ const ansiColors = require("ansi-colors");
 const os = require("os");
 const File = require("vinyl");
 const task = require("./task");
-const index_1 = require("./mangle/index");
 const postcss_1 = require("./postcss");
-const ts = require("typescript");
 const watch = require('./watch');
 // --- gulp-tsb: compile and transpile --------------------------------
 const reporter = (0, reporter_1.createReporter)();
@@ -110,28 +108,7 @@ function compileTask(src, out, build, options = {}) {
         if (src === 'src') {
             generator.execute();
         }
-        // mangle: TypeScript to TypeScript
-        let mangleStream = es.through();
-        if (build && !options.disableMangle) {
-            let ts2tsMangler = new index_1.Mangler(compile.projectPath, (...data) => fancyLog(ansiColors.blue('[mangler]'), ...data), { mangleExports: true, manglePrivateFields: true });
-            const newContentsByFileName = ts2tsMangler.computeNewFileContents(new Set(['saveState']));
-            mangleStream = es.through(async function write(data) {
-                const tsNormalPath = ts.normalizePath(data.path);
-                const newContents = (await newContentsByFileName).get(tsNormalPath);
-                if (newContents !== undefined) {
-                    data.contents = Buffer.from(newContents.out);
-                    data.sourceMap = newContents.sourceMap && JSON.parse(newContents.sourceMap);
-                }
-                this.push(data);
-            }, async function end() {
-                // free resources
-                (await newContentsByFileName).clear();
-                this.push(null);
-                ts2tsMangler = undefined;
-            });
-        }
         return srcPipe
-            .pipe(mangleStream)
             .pipe(generator.stream)
             .pipe(compile())
             .pipe(gulp.dest(out));

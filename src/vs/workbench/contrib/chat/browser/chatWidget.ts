@@ -1017,7 +1017,7 @@ export class ChatWidget extends Disposable implements IChatWidget {
 						unconfirmedSuggestions.add(v);
 					} else {
 						uniqueWorkingSetEntries.add(v);
-						editingSessionAttachedContext.push(this.attachmentModel.asVariableEntry(v));
+						editingSessionAttachedContext.push(this.attachmentModel.asVariableEntry(v, undefined, 'edit-session:working-set'));
 					}
 				}
 				let maximumFileEntries = this.chatEditingService.editingSessionFileLimit - editingSessionAttachedContext.length;

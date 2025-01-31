@@ -227,6 +227,16 @@ class ChatSlashStaticSlashCommandsContribution extends Disposable {
 	) {
 		super();
 		this._store.add(slashCommandService.registerSlashCommand({
+			command: 'settings',
+			detail: 'Open Model Settings',
+			sortText: 'z3_settings',
+			executeImmediately: true,
+			locations: [ChatAgentLocation.Panel]
+		}, async (prompt, progress) => {
+			progress.report({ content: new MarkdownString('🎉 Model settings opened successfully'), kind: 'markdownContent' });
+			commandService.executeCommand('flexpilot.configureModel');
+		}));
+		this._store.add(slashCommandService.registerSlashCommand({
 			command: 'clear',
 			detail: nls.localize('clear', "Start a new chat"),
 			sortText: 'z2_clear',
