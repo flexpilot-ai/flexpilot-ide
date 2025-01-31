@@ -1,9 +1,6 @@
 name: Product Build Workflow
 
-on:
-  push:
-    branches:
-      - "*"
+on: [push, pull_request]
 
 permissions:
   contents: write
