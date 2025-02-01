@@ -22,6 +22,8 @@ interface GitTree {
 // Define the UID for the real and dummy files
 enum FileUID { Real = 1, Dummy = 2 }
 
+const sanitizePath = (fsPath: string) => fsPath.replace(/\\/g, '/');
+
 /**
  * Implementation of the file system provider for the GitHub repository
  */
@@ -157,13 +159,16 @@ export class GitHubFileSystemProvider implements vscode.FileSystemProvider, vsco
 	}
 
 	stat(uri: vscode.Uri): vscode.FileStat | Thenable<vscode.FileStat> {
+		// Get the sanitized path for windows path style
+		const fsPath = sanitizePath(uri.fsPath);
+
 		// Check if the file exists in the file system
-		if (!fs.existsSync(uri.fsPath)) {
+		if (!fs.existsSync(fsPath)) {
 			throw vscode.FileSystemError.FileNotFound(uri);
 		}
 
 		// Get the file stats and return the file stat object
-		const stat = fs.statSync(uri.fsPath);
+		const stat = fs.statSync(fsPath);
 		const fileStat: vscode.FileStat = {
 			ctime: stat.ctimeMs,
 			size: stat.size,
@@ -174,8 +179,11 @@ export class GitHubFileSystemProvider implements vscode.FileSystemProvider, vsco
 	}
 
 	readDirectory(uri: vscode.Uri): [string, vscode.FileType][] | Thenable<[string, vscode.FileType][]> {
+		// Get the sanitized path for windows path style
+		const fsPath = sanitizePath(uri.fsPath);
+
 		// Check if the directory exists in the file system
-		if (!fs.existsSync(uri.fsPath)) {
+		if (!fs.existsSync(fsPath)) {
 			throw vscode.FileSystemError.FileNotFound(uri);
 		}
 
@@ -199,9 +207,12 @@ export class GitHubFileSystemProvider implements vscode.FileSystemProvider, vsco
 	}
 
 	createDirectory(uri: vscode.Uri): void | Thenable<void> {
+		// Get the sanitized path for windows path style
+		const fsPath = sanitizePath(uri.fsPath);
+
 		// Create the directory if it does not exist in the file system
-		if (!fs.existsSync(uri.fsPath)) {
-			fs.mkdirSync(uri.fsPath, { recursive: true });
+		if (!fs.existsSync(fsPath)) {
+			fs.mkdirSync(fsPath, { recursive: true });
 		}
 
 		// Emit the file change event
@@ -209,23 +220,26 @@ export class GitHubFileSystemProvider implements vscode.FileSystemProvider, vsco
 	}
 
 	async readFile(uri: vscode.Uri): Promise<Uint8Array> {
+		// Get the sanitized path for windows path style
+		const fsPath = sanitizePath(uri.fsPath);
+
 		// Check if the file exists in the file system
-		if (!fs.existsSync(uri.fsPath)) {
+		if (!fs.existsSync(fsPath)) {
 			throw vscode.FileSystemError.FileNotFound(uri);
 		}
 
 		// Fetch the file from the GitHub API if it is not a real file
-		if (fs.statSync(uri.fsPath).uid !== FileUID.Real) {
+		if (fs.statSync(fsPath).uid !== FileUID.Real) {
 			const originalUrl = `https://raw.githubusercontent.com${uri.path}`;
-			const originalStats = fs.statSync(uri.fsPath);
+			const originalStats = fs.statSync(fsPath);
 			const response = await fetch(corsEnableUrl(originalUrl));
-			fs.writeFileSync(uri.fsPath, Buffer.from(await response.arrayBuffer()));
-			fs.chownSync(uri.fsPath, FileUID.Real, FileUID.Real);
-			fs.utimesSync(uri.fsPath, originalStats.atime, originalStats.mtime);
+			fs.writeFileSync(fsPath, Buffer.from(await response.arrayBuffer()));
+			fs.chownSync(fsPath, FileUID.Real, FileUID.Real);
+			fs.utimesSync(fsPath, originalStats.atime, originalStats.mtime);
 		}
 
 		// Read the file content and return it as a Uint8Array
-		const content = fs.readFileSync(uri.fsPath, { encoding: 'buffer' });
+		const content = fs.readFileSync(fsPath, { encoding: 'buffer' });
 		if (content instanceof Buffer) {
 			return new Uint8Array(content.buffer);
 		}
@@ -233,8 +247,11 @@ export class GitHubFileSystemProvider implements vscode.FileSystemProvider, vsco
 	}
 
 	writeFile(uri: vscode.Uri, content: Uint8Array, options: { create: boolean; overwrite: boolean }): void | Thenable<void> {
+		// Get the sanitized path for windows path style
+		const fsPath = sanitizePath(uri.fsPath);
+
 		// Check if the file exists in the file system
-		const exists = fs.existsSync(uri.fsPath);
+		const exists = fs.existsSync(fsPath);
 
 		// Check if the file can be created or overwritten
 		if (!exists && !options.create) {
@@ -244,8 +261,8 @@ export class GitHubFileSystemProvider implements vscode.FileSystemProvider, vsco
 		}
 
 		// Write the file content to the file system
-		fs.writeFileSync(uri.fsPath, content);
-		fs.chownSync(uri.fsPath, FileUID.Real, FileUID.Real);
+		fs.writeFileSync(fsPath, content);
+		fs.chownSync(fsPath, FileUID.Real, FileUID.Real);
 
 		// Emit the file change event based on the file status
 		if (!exists) {
@@ -256,17 +273,20 @@ export class GitHubFileSystemProvider implements vscode.FileSystemProvider, vsco
 	}
 
 	delete(uri: vscode.Uri, options: { recursive: boolean }): void | Thenable<void> {
+		// Get the sanitized path for windows path style
+		const fsPath = sanitizePath(uri.fsPath);
+
 		// Check if the file exists in the file system
-		if (!fs.existsSync(uri.fsPath)) {
+		if (!fs.existsSync(fsPath)) {
 			throw vscode.FileSystemError.FileNotFound(uri);
 		}
 
 		// Delete the file or directory based on the recursive option
-		const stat = fs.statSync(uri.fsPath);
+		const stat = fs.statSync(fsPath);
 		if (stat.isDirectory()) {
-			fs.rmdirSync(uri.fsPath, { recursive: !!options.recursive });
+			fs.rmdirSync(fsPath, { recursive: !!options.recursive });
 		} else {
-			fs.unlinkSync(uri.fsPath);
+			fs.unlinkSync(fsPath);
 		}
 
 		// Emit the file change event based on the file status
@@ -275,17 +295,17 @@ export class GitHubFileSystemProvider implements vscode.FileSystemProvider, vsco
 
 	rename(oldUri: vscode.Uri, newUri: vscode.Uri, options: { overwrite: boolean }): void | Thenable<void> {
 		// Check if the old file exists in the file system
-		const exists = fs.existsSync(newUri.fsPath);
+		const exists = fs.existsSync(sanitizePath(newUri.fsPath));
 
 		// Rename the file if it exists and overwrite is enabled
 		if (exists && !options.overwrite) {
 			throw vscode.FileSystemError.FileExists(newUri);
-		} else if (!fs.existsSync(oldUri.fsPath)) {
+		} else if (!fs.existsSync(sanitizePath(oldUri.fsPath))) {
 			throw vscode.FileSystemError.FileNotFound(oldUri);
 		}
 
 		// Rename the file in the file system
-		fs.renameSync(oldUri.fsPath, newUri.fsPath);
+		fs.renameSync(sanitizePath(oldUri.fsPath), sanitizePath(newUri.fsPath));
 
 		// Emit the file change event based on the file status
 		this.emitter.fire([
