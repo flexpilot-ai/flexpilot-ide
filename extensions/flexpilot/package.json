@@ -312,7 +312,7 @@
       },
       {
         "view": "workbench.panel.chat.view.copilot",
-        "contents": "Sign in with GitHub to use Flexpilot, your AI pair programmer.\n[Sign In](command:flexpilot.github.signin)",
+        "contents": "Connect your GitHub Account to use Flexpilot, your AI pair programmer.\n\nThis is just required to personalize the IDE with your GitHub profile and auto-configure GitHub models for free to use instantly.\n\n[Connet your GitHub Account](command:flexpilot.github.signin)",
         "when": "flexpilot:isLoaded && flexpilot:isNetworkConnected && !flexpilot:isLoggedIn"
       },
       {
@@ -327,7 +327,7 @@
       },
       {
         "view": "workbench.panel.chat.view.edits",
-        "contents": "Sign in with GitHub to use Flexpilot, your AI pair programmer.\n[Sign In](command:flexpilot.github.signin)",
+        "contents": "Connect your GitHub Account to use Flexpilot, your AI pair programmer.\n\nThis is just required to personalize the IDE with your GitHub profile and auto-configure GitHub models for free to use instantly.\n\n[Connet your GitHub Account](command:flexpilot.github.signin)",
         "when": "flexpilot:isLoaded && flexpilot:isNetworkConnected && !flexpilot:isLoggedIn"
       }
     ],
