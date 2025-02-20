@@ -30,18 +30,20 @@ const sanitizePath = (fsPath: string) => fsPath.replace(/\\/g, '/');
 export class GitHubFileSystemProvider implements vscode.FileSystemProvider, vscode.FileSearchProvider, vscode.TextSearchProvider {
 
 	private emitter = new vscode.EventEmitter<vscode.FileChangeEvent[]>();
+	private baseUri!: vscode.Uri;
 	public repository!: { owner: string; name: string; branch: string; uri: vscode.Uri };
 
 	async initializeRepository(uri: vscode.Uri): Promise<void | Thenable<void>> {
 		logger.info(`Initializing repository for URI: ${uri.toString()}`);
 		// Create the base directory for the repository
+		this.baseUri = uri;
 		this.createDirectory(uri);
 
 		// Get the GitHub authentication session if it exists
 		const githubSession = await getGitHubSession();
 
 		// Set the repository owner, name, and branch
-		const [owner, repo, branch] = uri.path.split('/').filter(item => item.trim());
+		let [owner, repo, branch] = uri.path.split('/').filter(item => item.trim());
 		this.repository = { owner, name: repo, branch: branch, uri: uri };
 
 		// Set the request headers for the GitHub API
@@ -51,6 +53,24 @@ export class GitHubFileSystemProvider implements vscode.FileSystemProvider, vsco
 		};
 		if (githubSession) {
 			requestHeader['Authorization'] = `Bearer ${githubSession.accessToken}`;
+		}
+
+		// Get the default branch if the branch is null
+		if (!branch) {
+			const response = await fetch(
+				`https://api.github.com/repos/${owner}/${repo}`,
+				{ headers: requestHeader }
+			);
+
+			// Show an error message if the request fails
+			if (!response.ok) {
+				logger.notifyError('Failed to fetch repository: ' + await response.text());
+				return;
+			}
+
+			const responseJson = await response.json();
+			branch = responseJson.default_branch;
+			this.repository.branch = responseJson.default_branch;
 		}
 
 		// Fetch the repository tree from the GitHub API
@@ -230,7 +250,8 @@ export class GitHubFileSystemProvider implements vscode.FileSystemProvider, vsco
 
 		// Fetch the file from the GitHub API if it is not a real file
 		if (fs.statSync(fsPath).uid !== FileUID.Real) {
-			const originalUrl = `https://raw.githubusercontent.com${uri.path}`;
+			const urlPath = `${this.repository.owner}/${this.repository.name}/${this.repository.branch}${uri.path.replace(this.baseUri.path, '')}`;
+			const originalUrl = `https://raw.githubusercontent.com/${urlPath}`;
 			const originalStats = fs.statSync(fsPath);
 			const response = await fetch(corsEnableUrl(originalUrl));
 			fs.writeFileSync(fsPath, Buffer.from(await response.arrayBuffer()));
