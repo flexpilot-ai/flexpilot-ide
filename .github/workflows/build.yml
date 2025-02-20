@@ -83,7 +83,9 @@ jobs:
           python-version: '3.12'
 
       - name: Install Linux Build Dependencies
-        run: sudo apt-get install build-essential g++ libx11-dev libxkbfile-dev libsecret-1-dev libkrb5-dev python-is-python3 fakeroot rpm
+        run: |
+          sudo apt-get update
+          sudo apt-get install build-essential g++ libx11-dev libxkbfile-dev libsecret-1-dev libkrb5-dev python-is-python3 fakeroot rpm
 
       - name: Install Project Dependencies
         working-directory: ./repository
