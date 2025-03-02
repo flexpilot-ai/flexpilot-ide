@@ -54,6 +54,7 @@ pin-project = "1.1.0"
 console = "0.15.7"
 bytes = "1.4.0"
 tar = "0.4.38"
+openssl-sys = { version = "0.9", features = ["vendored"] }
 
 [build-dependencies]
 serde = { version="1.0.163", features = ["derive"] }

@@ -1,0 +1,9 @@
+{
+  "name": "vsda",
+  "description": "VS Code debug handshake module",
+  "version": "0.0.1",
+  "author": {
+    "name": "Flexpilot AI"
+  },
+  "main": "index.js"
+}

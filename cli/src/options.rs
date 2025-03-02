@@ -47,6 +47,8 @@ impl Quality {
 			.unwrap_or("code-server-oss")
 			.to_string();
 
+		server_name = "code-server-oss".to_string();
+
 		if cfg!(windows) {
 			server_name.push_str(".cmd");
 		}
